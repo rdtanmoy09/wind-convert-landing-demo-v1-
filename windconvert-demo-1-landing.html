@@ -1,0 +1,1089 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>WindConvert — Free CSS ↔ Tailwind Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Syne:wght@600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ── CSS Variables ── */
+      :root {
+        --bg-primary: #111110;
+        --bg-secondary: #1a1a18;
+        --bg-card: #1f1f1d;
+        --bg-hover: #252523;
+        --border: #2e2e2b;
+        --border-subtle: #232321;
+
+        --text-primary: #e8e6e1;
+        --text-secondary: #a09e99;
+        --text-muted: #6b6963;
+
+        --accent: #e07b39;
+        --accent-dim: #c06930;
+        --accent-glow: rgba(224, 123, 57, 0.12);
+        --accent-subtle: rgba(224, 123, 57, 0.06);
+
+        --success: #5a9e6f;
+        --error: #c0392b;
+
+        --font-mono: "JetBrains Mono", monospace;
+        --font-display: "Syne", sans-serif;
+
+        --radius-sm: 4px;
+        --radius-md: 8px;
+        --radius-lg: 12px;
+
+        --max-width: 1140px;
+        --nav-height: 60px;
+      }
+
+      /* ── Reset ── */
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: var(--font-mono);
+        background: var(--bg-primary);
+        color: var(--text-primary);
+        line-height: 1.6;
+        overflow-x: hidden;
+        -webkit-font-smoothing: antialiased;
+      }
+      a {
+        text-decoration: none;
+        color: inherit;
+      }
+
+      /* ── Layout Helpers ── */
+      .container {
+        max-width: var(--max-width);
+        margin: 0 auto;
+        padding: 0 32px;
+      }
+      @media (max-width: 640px) {
+        .container {
+          padding: 0 20px;
+        }
+      }
+
+      /* ─────────────────────────────────────
+       NAVBAR
+    ───────────────────────────────────── */
+      .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        height: var(--nav-height);
+        background: rgba(17, 17, 16, 0.88);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid var(--border-subtle);
+      }
+      .navbar .container {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .nav-logo {
+        font-family: var(--font-display);
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .nav-logo-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--accent);
+        display: inline-block;
+      }
+      .btn-primary {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--bg-primary);
+        background: var(--accent);
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 9px 20px;
+        cursor: pointer;
+        transition:
+          background 0.18s ease,
+          transform 0.12s ease;
+        display: inline-block;
+      }
+      .btn-primary:hover {
+        background: var(--accent-dim);
+        transform: translateY(-1px);
+      }
+      .btn-primary:active {
+        transform: translateY(0);
+      }
+
+      /* ─────────────────────────────────────
+       HERO
+    ───────────────────────────────────── */
+      .hero {
+        padding: 96px 0 80px;
+        position: relative;
+        overflow: hidden;
+      }
+      /* Subtle grid texture */
+      .hero::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(var(--border-subtle) 1px, transparent 1px),
+          linear-gradient(90deg, var(--border-subtle) 1px, transparent 1px);
+        background-size: 48px 48px;
+        mask-image: radial-gradient(
+          ellipse 80% 60% at 50% 0%,
+          black 0%,
+          transparent 100%
+        );
+        -webkit-mask-image: radial-gradient(
+          ellipse 80% 60% at 50% 0%,
+          black 0%,
+          transparent 100%
+        );
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      /* Orange glow top-center */
+      .hero::after {
+        content: "";
+        position: absolute;
+        top: -80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 600px;
+        height: 300px;
+        background: radial-gradient(
+          ellipse,
+          rgba(224, 123, 57, 0.08) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      .hero-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        font-weight: 500;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--accent);
+        border: 1px solid rgba(224, 123, 57, 0.25);
+        background: var(--accent-subtle);
+        border-radius: 100px;
+        padding: 5px 14px;
+        margin-bottom: 28px;
+      }
+      .hero-label-dot {
+        width: 5px;
+        height: 5px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: pulse 2s ease infinite;
+      }
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.3;
+        }
+      }
+
+      .hero h1 {
+        font-family: var(--font-display);
+        font-size: clamp(40px, 6vw, 72px);
+        font-weight: 800;
+        line-height: 1.05;
+        letter-spacing: -0.03em;
+        color: var(--text-primary);
+        max-width: 720px;
+        margin-bottom: 24px;
+      }
+      .hero h1 em {
+        font-style: normal;
+        color: var(--accent);
+      }
+
+      .hero-sub {
+        font-size: 15px;
+        font-weight: 400;
+        color: var(--text-secondary);
+        max-width: 520px;
+        line-height: 1.7;
+        margin-bottom: 40px;
+      }
+
+      .hero-cta-group {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+      .btn-primary-lg {
+        font-family: var(--font-mono);
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--bg-primary);
+        background: var(--accent);
+        border: none;
+        border-radius: var(--radius-sm);
+        padding: 13px 28px;
+        cursor: pointer;
+        transition:
+          background 0.18s,
+          transform 0.12s,
+          box-shadow 0.18s;
+        display: inline-block;
+        box-shadow: 0 0 0 0 var(--accent-glow);
+      }
+      .btn-primary-lg:hover {
+        background: var(--accent-dim);
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(224, 123, 57, 0.2);
+      }
+      .hero-note {
+        font-size: 12px;
+        color: var(--text-muted);
+        letter-spacing: 0.02em;
+      }
+      .hero-note span {
+        color: var(--success);
+      }
+
+      /* ── Code preview ── */
+      .hero-preview {
+        margin-top: 64px;
+        position: relative;
+      }
+      .preview-window {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+        box-shadow:
+          0 0 0 1px rgba(255, 255, 255, 0.03),
+          0 32px 80px rgba(0, 0, 0, 0.5),
+          0 0 60px rgba(224, 123, 57, 0.04);
+      }
+      .preview-titlebar {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        padding: 12px 16px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .dot-row {
+        display: flex;
+        gap: 6px;
+      }
+      .dot {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+      }
+      .dot-r {
+        background: #ff5f57;
+      }
+      .dot-y {
+        background: #ffbd2e;
+      }
+      .dot-g {
+        background: #28ca41;
+      }
+      .preview-tabs {
+        display: flex;
+        gap: 0;
+        margin-left: auto;
+      }
+      .preview-tab {
+        font-size: 11px;
+        font-family: var(--font-mono);
+        color: var(--text-muted);
+        padding: 4px 12px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        letter-spacing: 0.04em;
+      }
+      .preview-tab.active {
+        background: var(--accent-subtle);
+        color: var(--accent);
+        border: 1px solid rgba(224, 123, 57, 0.2);
+      }
+
+      .preview-body {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        min-height: 200px;
+      }
+      .preview-pane {
+        padding: 24px;
+      }
+      .preview-pane pre {
+        font-family: var(--font-mono);
+        font-size: 12.5px;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        white-space: pre-wrap;
+        word-break: break-word;
+      }
+      .preview-pane pre .kw {
+        color: #c084fc;
+      }
+      .preview-pane pre .sel {
+        color: #60a5fa;
+      }
+      .preview-pane pre .val {
+        color: #86efac;
+      }
+      .preview-pane pre .tw {
+        color: var(--accent);
+      }
+      .preview-pane pre .str {
+        color: #fbbf24;
+      }
+      .preview-pane pre .tag {
+        color: #60a5fa;
+      }
+      .preview-pane pre .attr {
+        color: #c084fc;
+      }
+      .preview-pane pre .cm {
+        color: var(--text-muted);
+        font-style: italic;
+      }
+
+      .preview-divider {
+        width: 1px;
+        background: var(--border);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .preview-arrow {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: 50%;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        color: var(--accent);
+        position: relative;
+        z-index: 1;
+      }
+      .pane-label {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 12px;
+        font-weight: 500;
+      }
+
+      /* ─────────────────────────────────────
+       HOW IT WORKS
+    ───────────────────────────────────── */
+      .section {
+        padding: 96px 0;
+        border-top: 1px solid var(--border-subtle);
+      }
+      .section-label {
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--accent);
+        margin-bottom: 16px;
+      }
+      .section-title {
+        font-family: var(--font-display);
+        font-size: clamp(28px, 4vw, 42px);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        line-height: 1.15;
+        margin-bottom: 16px;
+      }
+      .section-sub {
+        font-size: 14px;
+        color: var(--text-secondary);
+        line-height: 1.7;
+        max-width: 480px;
+        margin-bottom: 56px;
+      }
+
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1px;
+        background: var(--border);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+      .step {
+        background: var(--bg-card);
+        padding: 36px 32px;
+        position: relative;
+        transition: background 0.2s;
+      }
+      .step:hover {
+        background: var(--bg-hover);
+      }
+      .step-number {
+        font-family: var(--font-display);
+        font-size: 48px;
+        font-weight: 800;
+        color: var(--border);
+        line-height: 1;
+        margin-bottom: 20px;
+        letter-spacing: -0.04em;
+        transition: color 0.2s;
+      }
+      .step:hover .step-number {
+        color: var(--accent-dim);
+      }
+      .step-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 10px;
+        letter-spacing: -0.01em;
+      }
+      .step-desc {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.7;
+      }
+      .step-icon {
+        position: absolute;
+        top: 32px;
+        right: 32px;
+        width: 36px;
+        height: 36px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        background: var(--bg-secondary);
+      }
+
+      @media (max-width: 768px) {
+        .steps {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ─────────────────────────────────────
+       FEATURES
+    ───────────────────────────────────── */
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+      }
+      @media (max-width: 768px) {
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .feature-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        padding: 28px;
+        transition:
+          border-color 0.2s,
+          background 0.2s,
+          transform 0.2s;
+      }
+      .feature-card:hover {
+        border-color: rgba(224, 123, 57, 0.3);
+        background: var(--bg-hover);
+        transform: translateY(-2px);
+      }
+      .feature-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: var(--radius-sm);
+        background: var(--accent-subtle);
+        border: 1px solid rgba(224, 123, 57, 0.18);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        margin-bottom: 16px;
+      }
+      .feature-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 8px;
+        letter-spacing: -0.01em;
+      }
+      .feature-desc {
+        font-size: 13px;
+        color: var(--text-muted);
+        line-height: 1.7;
+      }
+
+      /* ─────────────────────────────────────
+       DEMO PREVIEW
+    ───────────────────────────────────── */
+      .demo-wrap {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-lg);
+        overflow: hidden;
+      }
+      .demo-header {
+        background: var(--bg-secondary);
+        border-bottom: 1px solid var(--border);
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .demo-header-left {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .demo-badge {
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        font-weight: 600;
+        padding: 3px 10px;
+        border-radius: 100px;
+        background: var(--accent-subtle);
+        color: var(--accent);
+        border: 1px solid rgba(224, 123, 57, 0.2);
+      }
+      .demo-title-text {
+        font-size: 12px;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+      }
+      .demo-body {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      @media (max-width: 640px) {
+        .demo-body {
+          grid-template-columns: 1fr;
+        }
+      }
+      .demo-pane {
+        padding: 24px;
+      }
+      .demo-pane:first-child {
+        border-right: 1px solid var(--border);
+      }
+      .demo-pane-label {
+        font-size: 10px;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--text-muted);
+        margin-bottom: 14px;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .demo-pane-label::before {
+        content: "";
+        display: inline-block;
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--text-muted);
+      }
+      .demo-pane-label.out::before {
+        background: var(--success);
+      }
+      .demo-code {
+        font-family: var(--font-mono);
+        font-size: 12px;
+        line-height: 1.85;
+        color: var(--text-secondary);
+      }
+      .demo-code .kw {
+        color: #c084fc;
+      }
+      .demo-code .sel {
+        color: #60a5fa;
+      }
+      .demo-code .val {
+        color: #86efac;
+      }
+      .demo-code .tw {
+        color: var(--accent);
+      }
+      .demo-code .tag {
+        color: #60a5fa;
+      }
+      .demo-code .attr {
+        color: #c084fc;
+      }
+      .demo-code .str {
+        color: #fbbf24;
+      }
+
+      /* ─────────────────────────────────────
+       AD SLOT
+    ───────────────────────────────────── */
+      .ad-slot {
+        margin: 0;
+        padding: 20px 0;
+        display: flex;
+        justify-content: center;
+      }
+      .ad-placeholder {
+        width: 100%;
+        max-width: 728px;
+        height: 90px;
+        border: 1px dashed var(--border);
+        border-radius: var(--radius-md);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: var(--text-muted);
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        background: var(--bg-secondary);
+      }
+
+      /* ─────────────────────────────────────
+       CTA SECTION
+    ───────────────────────────────────── */
+      .cta-section {
+        padding: 96px 0;
+        border-top: 1px solid var(--border-subtle);
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+      .cta-section::before {
+        content: "";
+        position: absolute;
+        bottom: -100px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 500px;
+        height: 300px;
+        background: radial-gradient(
+          ellipse,
+          rgba(224, 123, 57, 0.07) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+      .cta-section .section-title {
+        margin-bottom: 12px;
+      }
+      .cta-note {
+        font-size: 13px;
+        color: var(--text-muted);
+        margin-top: 16px;
+      }
+
+      /* ─────────────────────────────────────
+       FOOTER
+    ───────────────────────────────────── */
+      footer {
+        border-top: 1px solid var(--border-subtle);
+        padding: 28px 0;
+      }
+      footer .container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+      .footer-logo {
+        font-family: var(--font-display);
+        font-size: 15px;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .footer-links {
+        display: flex;
+        gap: 24px;
+      }
+      .footer-links a {
+        font-size: 12px;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+        transition: color 0.15s;
+      }
+      .footer-links a:hover {
+        color: var(--text-secondary);
+      }
+      .footer-copy {
+        font-size: 11px;
+        color: var(--text-muted);
+        letter-spacing: 0.04em;
+      }
+
+      /* ─────────────────────────────────────
+       FADE-IN ANIMATION
+    ───────────────────────────────────── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(16px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      .fade-up {
+        animation: fadeUp 0.55s ease forwards;
+        opacity: 0;
+      }
+      .delay-1 {
+        animation-delay: 0.08s;
+      }
+      .delay-2 {
+        animation-delay: 0.16s;
+      }
+      .delay-3 {
+        animation-delay: 0.24s;
+      }
+      .delay-4 {
+        animation-delay: 0.32s;
+      }
+      .delay-5 {
+        animation-delay: 0.44s;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ── NAVBAR ── -->
+    <nav class="navbar">
+      <div class="container">
+        <a href="/" class="nav-logo">
+          <span class="nav-logo-dot"></span>
+          WindConvert
+        </a>
+        <a href="/convert" class="btn-primary">Start Converting</a>
+      </div>
+    </nav>
+
+    <!-- ── HERO ── -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-label fade-up">
+          <span class="hero-label-dot"></span>
+          Free — No login required
+        </div>
+        <h1 class="fade-up delay-1">
+          CSS ↔ Tailwind.<br />
+          <em>Converted instantly.</em>
+        </h1>
+        <p class="hero-sub fade-up delay-2">
+          Paste your CSS, get Tailwind classes. Or paste Tailwind, get clean CSS
+          back. No accounts. No setup. Just the converter.
+        </p>
+        <div class="hero-cta-group fade-up delay-3">
+          <a href="/convert" class="btn-primary-lg">Start Converting →</a>
+          <span class="hero-note"
+            ><span>✓</span> Free forever &nbsp;·&nbsp; No account needed</span
+          >
+        </div>
+
+        <!-- Code preview -->
+        <div class="hero-preview fade-up delay-4">
+          <div class="preview-window">
+            <div class="preview-titlebar">
+              <div class="dot-row">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+              </div>
+              <div class="preview-tabs">
+                <div class="preview-tab active">HTML output</div>
+                <div class="preview-tab">JSX output</div>
+              </div>
+            </div>
+            <div class="preview-body">
+              <div class="preview-pane">
+                <div class="pane-label">Input — CSS</div>
+                <pre><span class="cm">/* your existing stylesheet */</span>
+<span class="sel">.card</span> {
+  <span class="kw">display</span>: <span class="val">flex</span>;
+  <span class="kw">flex-direction</span>: <span class="val">column</span>;
+  <span class="kw">padding</span>: <span class="val">1.5rem</span>;
+  <span class="kw">background</span>: <span class="val">#fff</span>;
+  <span class="kw">border-radius</span>: <span class="val">8px</span>;
+  <span class="kw">box-shadow</span>: <span class="val">0 2px 8px rgba(0,0,0,0.1)</span>;
+  <span class="kw">gap</span>: <span class="val">0.75rem</span>;
+}</pre>
+              </div>
+              <div class="preview-divider">
+                <div class="preview-arrow">→</div>
+              </div>
+              <div class="preview-pane">
+                <div class="pane-label">Output — Tailwind</div>
+                <pre><span class="cm">&lt;!-- WindConvert output --&gt;</span>
+<span class="tag">&lt;div</span> <span class="attr">class</span>=<span class="str">"flex flex-col
+  p-6 bg-white
+  rounded-lg
+  shadow-md gap-3"</span><span class="tag">&gt;</span>
+  ...
+<span class="tag">&lt;/div&gt;</span></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── HOW IT WORKS ── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">How it works</div>
+        <h2 class="section-title">Three steps. Done.</h2>
+        <p class="section-sub">
+          No configuration. No learning curve. Paste your code and walk away
+          with the output.
+        </p>
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">01</div>
+            <div class="step-icon">📋</div>
+            <div class="step-title">Paste your code</div>
+            <div class="step-desc">
+              Drop in your HTML + CSS, or your Tailwind HTML. Both directions
+              are supported on the same page.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">02</div>
+            <div class="step-icon">⚡</div>
+            <div class="step-title">Click Convert</div>
+            <div class="step-desc">
+              The rule-based engine processes your code server-side in
+              milliseconds. No AI fees, no delays, no rate limits.
+            </div>
+          </div>
+          <div class="step">
+            <div class="step-number">03</div>
+            <div class="step-icon">📎</div>
+            <div class="step-title">Copy the output</div>
+            <div class="step-desc">
+              Hit copy. Drop the result straight into your project. That's all
+              there is to it.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FEATURES ── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Features</div>
+        <h2 class="section-title">Built for real workflows</h2>
+        <p class="section-sub">
+          Handles the CSS patterns you actually write — not just toy examples.
+        </p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">↔</div>
+            <div class="feature-title">Bidirectional conversion</div>
+            <div class="feature-desc">
+              CSS to Tailwind and Tailwind back to CSS. Both modes live on the
+              same page — no switching.
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⬡</div>
+            <div class="feature-title">HTML or JSX output</div>
+            <div class="feature-desc">
+              Converting to Tailwind? Pick plain HTML or JSX. Works for React
+              and Next.js projects out of the box.
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">◎</div>
+            <div class="feature-title">Zero cost per conversion</div>
+            <div class="feature-desc">
+              Rule-based engine — no AI API calls. Converts instantly, no rate
+              limits, no usage caps.
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <div class="feature-title">Instant results</div>
+            <div class="feature-desc">
+              Server-side processing returns output in under a second. No
+              spinners, no waiting.
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">🔒</div>
+            <div class="feature-title">No account required</div>
+            <div class="feature-desc">
+              Paste, convert, copy, leave. No email, no password, no data
+              stored. Nothing.
+            </div>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">✦</div>
+            <div class="feature-title">Covers 70–80% of real CSS</div>
+            <div class="feature-desc">
+              Handles flexbox, grid, spacing, colors, shadows, borders — the
+              patterns that make up most codebases.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── DEMO PREVIEW ── -->
+    <section class="section">
+      <div class="container">
+        <div class="section-label">Live demo</div>
+        <h2 class="section-title">See it in action</h2>
+        <p class="section-sub">
+          Real input, real output. This is exactly what the converter produces.
+        </p>
+        <div class="demo-wrap">
+          <div class="demo-header">
+            <div class="demo-header-left">
+              <div class="dot-row">
+                <div class="dot dot-r"></div>
+                <div class="dot dot-y"></div>
+                <div class="dot dot-g"></div>
+              </div>
+              <span class="demo-title-text">windconvert.app/convert</span>
+            </div>
+            <div class="demo-badge">Mode A — CSS → Tailwind</div>
+          </div>
+          <div class="demo-body">
+            <div class="demo-pane">
+              <div class="demo-pane-label">Input</div>
+              <div class="demo-code">
+                <span class="sel">.navbar</span> {<br />
+                &nbsp;&nbsp;<span class="kw">display</span>:
+                <span class="val">flex</span>;<br />
+                &nbsp;&nbsp;<span class="kw">align-items</span>:
+                <span class="val">center</span>;<br />
+                &nbsp;&nbsp;<span class="kw">justify-content</span>:
+                <span class="val">space-between</span>;<br />
+                &nbsp;&nbsp;<span class="kw">padding</span>:
+                <span class="val">0 2rem</span>;<br />
+                &nbsp;&nbsp;<span class="kw">height</span>:
+                <span class="val">64px</span>;<br />
+                &nbsp;&nbsp;<span class="kw">background</span>:
+                <span class="val">#0f172a</span>;<br />
+                &nbsp;&nbsp;<span class="kw">border-bottom</span>:
+                <span class="val">1px solid #1e293b</span>;<br />
+                }
+              </div>
+            </div>
+            <div class="demo-pane">
+              <div class="demo-pane-label out">Output — Tailwind</div>
+              <div class="demo-code">
+                <span class="tag">&lt;nav</span><br />
+                &nbsp;&nbsp;<span class="attr">class</span>=<span class="str"
+                  >"flex items-center<br />
+                  &nbsp;&nbsp;justify-between<br />
+                  &nbsp;&nbsp;px-8 h-16<br />
+                  &nbsp;&nbsp;bg-slate-900<br />
+                  &nbsp;&nbsp;border-b border-slate-800"</span
+                ><br />
+                <span class="tag">&gt;</span><br />
+                &nbsp;&nbsp;...<br />
+                <span class="tag">&lt;/nav&gt;</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── AD SLOT ── -->
+    <div class="container">
+      <div class="ad-slot">
+        <div class="ad-placeholder">Advertisement — Google AdSense</div>
+      </div>
+    </div>
+
+    <!-- ── CTA ── -->
+    <section class="cta-section">
+      <div class="container">
+        <div class="section-label">Get started</div>
+        <h2 class="section-title">Ready to convert?</h2>
+        <p class="section-sub" style="margin: 0 auto 32px; text-align: center">
+          Open the converter. Paste your code. Copy the output.<br />
+          No account. No friction.
+        </p>
+        <a href="/convert" class="btn-primary-lg">Open the Converter →</a>
+        <p class="cta-note">
+          Free forever · Zero setup · Works in your browser
+        </p>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ── -->
+    <footer>
+      <div class="container">
+        <div class="footer-logo">
+          <span class="nav-logo-dot" style="width: 6px; height: 6px"></span>
+          WindConvert
+        </div>
+        <div class="footer-links">
+          <a href="/convert">Converter</a>
+        </div>
+        <div class="footer-copy">© 2026 WindConvert</div>
+      </div>
+    </footer>
+  </body>
+</html>
